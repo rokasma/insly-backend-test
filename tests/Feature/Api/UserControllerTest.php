@@ -135,4 +135,18 @@ class UserControllerTest extends TestCase
                 ]
             ]);
     }
+
+    public function testUserDeleteWillBeSuccessful(): void
+    {
+        /** @var User $user */
+        $user = UserFactory::new()->create(['first_name' => 'rokas']);
+        $user->createToken('test-token')->plainTextToken;
+
+        $this->actingAs($user)->deleteJson('/api/users/delete/' . $user->id)
+            ->assertNoContent();
+
+        $this->assertDatabaseMissing('users', [
+            'first_name' => 'rokas',
+        ]);
+    }
 }
